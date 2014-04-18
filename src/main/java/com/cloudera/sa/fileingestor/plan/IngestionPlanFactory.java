@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.cloudera.sa.fileingestor.model.DstPojo;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
+import com.cloudera.sa.fileingestor.model.IngestionPlanPojo.FileIngestionType;
 
 public class IngestionPlanFactory {
   
@@ -26,6 +27,9 @@ public class IngestionPlanFactory {
   public static String DST_PERMISSION = "permission";
   public static String DST_CREATE_DIR = "createDir";
   public static String DST_REPLACE_EXISTING_FILE = "replaceExistingFile";
+  
+  
+  
   
   public static IngestionPlanPojo getInstance(Properties p) {
     IngestionPlanPojo result = new IngestionPlanPojo();
@@ -45,6 +49,20 @@ public class IngestionPlanFactory {
     }
     logger.info(LOCAL_WORKING_DIR + " = " + localWorkingDir);    
     result.setWorkingLocalDir(localWorkingDir);
+    
+    result.setFileIngestionType(IngestionPlanPojo.FileIngestionType.getValue(p.getProperty(FILE_INGESTION_TYPE)));
+    if (result.getFileIngestionType() == null) {
+      logger.error(FILE_INGESTION_TYPE + " has no value");
+      throw new RuntimeException(FILE_INGESTION_TYPE + " has no value");
+    }
+    logger.info(FILE_INGESTION_TYPE + " = " + result.getFileIngestionType());    
+    
+    result.setHdfsCopyMethod(IngestionPlanPojo.HdfsCopyMethodType.getValue(p.getProperty(HDFS_COPY_TYPE)));
+    if (result.getHdfsCopyMethod() == null) {
+      logger.error(HDFS_COPY_TYPE + " has no value");
+      throw new RuntimeException(HDFS_COPY_TYPE + " has no value");
+    }
+    logger.info(HDFS_COPY_TYPE + " = " + result.getHdfsCopyMethod());
     
     String numberOfThreads = p.getProperty(NUMBER_OF_THREADS);
     int numOfThreads = 1;
@@ -68,13 +86,16 @@ public class IngestionPlanFactory {
         if (parts.length == 3) {
           DstPojo dst = dstMap.get(parts[1]);
           if (dst == null) {
-            dst = new DstPojo(parts[2]);
-            dstMap.put(key, dst);
+            dst = new DstPojo(parts[1]);
+            dstMap.put(parts[1], dst);
           }
           
           try {
             if (parts[2].equals(DST_PATH)){
               dst.setPath(entry.getValue().toString());
+              
+              logger.info("adding path '" + dst.getPath() + "' to dst " + parts[1] + " to ");
+              
             } else if (parts[2].equals(DST_OWNER)){
               dst.setOwner(entry.getValue().toString());
             } else if (parts[2].equals(DST_GROUP)){
@@ -101,8 +122,11 @@ public class IngestionPlanFactory {
       throw new RuntimeException("no distinations defined");
     }
     
-    for (DstPojo dst: dstMap.values()) {
-      dstList.add(dst);
+    for (Entry<String, DstPojo> entry: dstMap.entrySet()) {
+      
+      logger.info("adding destriniation: " + entry.getKey() + " " + entry.getValue());
+      
+      dstList.add(entry.getValue());
     }
     result.setDstList(dstList);
     

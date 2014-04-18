@@ -9,6 +9,8 @@ public class DstPojo {
   boolean createDir;
   boolean replaceIfFileExist;
   
+  
+  
   public DstPojo(String name) {
     this.name = name;
     owner = "hdfs";
@@ -71,6 +73,14 @@ public class DstPojo {
     this.replaceIfFileExist = replaceIfFileExist;
   }
   
-  
+  public String toString() {
+    return name + "|" + 
+        path + "|" + 
+        owner + "|" + 
+        group + "|" + 
+        permissions + "|" + 
+        createDir + "|" + 
+        replaceIfFileExist + "|";
+  }
   
 }

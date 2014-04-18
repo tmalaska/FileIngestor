@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -26,7 +27,7 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
   }
 
   @Override
-  protected void ingestDataToHdfsDir() throws IOException {
+  protected void ingestDataToHdfsDir() throws IOException, InterruptedException {
     fs = FileSystem.get(new Configuration());
     
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -35,6 +36,7 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
       executorService.execute(new CopyFileToHDFSThread(file));
     }
     executorService.shutdown();
+    executorService.awaitTermination(3, TimeUnit.HOURS);
     fs.close();
   }
   
@@ -48,8 +50,11 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
 
     @Override
     public void run() {
-      logger.info("Starting to ingest " + sourceFile);
+      
       Path dstPath = new Path(distination.getPath() + "/" + sourceFile.getName());
+      
+      logger.info("Starting to ingest " + sourceFile + " to distiniation " + distination.getName() + " to location " + dstPath);
+      
       try {
         fs.copyFromLocalFile(false, distination.isReplaceIfFileExist(), new Path(sourceFile.getPath()), dstPath);
       } catch (IOException e) {

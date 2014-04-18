@@ -1,6 +1,7 @@
 package com.cloudera.sa.fileingestor.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class IngestionPlanPojo {
 
@@ -9,23 +10,63 @@ public class IngestionPlanPojo {
   long jobId;
   int numberOfThreads;
   FileIngestionType fileIngestionType;
-  HdfsCopyMethod hdfsCopyMethod;
+  HdfsCopyMethodType hdfsCopyMethodType;
   ArrayList<DstPojo> dstList = new ArrayList<DstPojo>();
-  
-  public class FileIngestionType {
-    public static final int BIG_FILES = 1;
-    public static final int SEQ_SMALL_FILES = 2;
-    public static final int AVRO_SMALL_FILES = 3;
-    public static final int HBASE_SMALL_FILES = 4;
+
+  public enum FileIngestionType {
+    BIG_FILES("BIG_FILE"),
+    SEQ_SMALL_FILES("SEQ_SMALL_FILES"),
+    AVRO_SMALL_FILES("AVRO_SMALL_FILES"),
+    HBASE_SMALL_FILES("HBASE_SMALL_FILES");
+
+    public static HashMap<String, FileIngestionType> map ;
+    String value;
+    
+    FileIngestionType(String value) {
+      this.value = value;
+    }
+    
+    public static FileIngestionType getValue(String key) {
+      if (map == null) {
+        initMapping();
+      }
+      return map.get(key);
+    }
+
+    private static void initMapping() {
+      map = new HashMap<String, FileIngestionType>();
+      for (FileIngestionType s : values()) {
+        map.put(s.toString(), s);
+      }
+    }
   }
 
-  public class HdfsCopyMethod {
-    public static final int DISTCP = 1;
-    public static final int MULTI_THREADED = 2;
+  public enum HdfsCopyMethodType {
+    DISTCP("DISTCP"),
+    MULTI_THREADED("MULTI_THREADED");
+
+    public static HashMap<String, HdfsCopyMethodType> map ;
+    String value;
+    
+    HdfsCopyMethodType(String value) {
+      this.value = value;
+    }
+    
+    public static HdfsCopyMethodType getValue(String key) {
+      if (map == null) {
+        initMapping();
+      }
+      return map.get(key);
+    }
+
+    private static void initMapping() {
+      map = new HashMap<String, HdfsCopyMethodType>();
+      for (HdfsCopyMethodType s : values()) {
+        map.put(s.toString(), s);
+      }
+    }
   }
-  
-  
-  
+
   public int getNumberOfThreads() {
     return numberOfThreads;
   }
@@ -66,12 +107,12 @@ public class IngestionPlanPojo {
     this.fileIngestionType = fileIngestionType;
   }
 
-  public HdfsCopyMethod getHdfsCopyMethod() {
-    return hdfsCopyMethod;
+  public HdfsCopyMethodType getHdfsCopyMethod() {
+    return hdfsCopyMethodType;
   }
 
-  public void setHdfsCopyMethod(HdfsCopyMethod hdfsCopyMethod) {
-    this.hdfsCopyMethod = hdfsCopyMethod;
+  public void setHdfsCopyMethod(HdfsCopyMethodType hdfsCopyMethodType) {
+    this.hdfsCopyMethodType = hdfsCopyMethodType;
   }
 
   public ArrayList<DstPojo> getDstList() {
@@ -83,5 +124,5 @@ public class IngestionPlanPojo {
   }
   
   
-  
+
 }

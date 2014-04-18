@@ -29,18 +29,24 @@ public abstract class AbstractIngestToHDFSAction {
   public AbstractIngestToHDFSAction(IngestionPlanPojo planPojo) {
     this.sourceDir = planPojo.getSourceLocalDir();
     
-    this.processingDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/" + processingDir;
-    this.failureDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/" + failureDir;
-    this.successDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/" + successDir;
+    this.processingDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/processing";
+    this.failureDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/failure";
+    this.successDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/successful";
     
     this.distination = planPojo.getDstList().get(0);
     this.numberOfThreads = planPojo.getNumberOfThreads();
   }
   
-  public void run() throws IOException {
+  public void run() throws IOException, InterruptedException {
     createLocalFolders();
     moveFilesToProcessFolder();
     ingestDataToHdfsDir();
+    
+    File processingDirFile = new File(processingDir);
+    for (File file: processingDirFile.listFiles()) {
+      moveToSucccess(file);
+    }
+    
     cleanup();
   }
   
@@ -71,7 +77,7 @@ public abstract class AbstractIngestToHDFSAction {
     }
   }
   
-  abstract protected void ingestDataToHdfsDir() throws IOException;
+  abstract protected void ingestDataToHdfsDir() throws IOException, InterruptedException;
   
   protected void moveToSucccess(File localFile) {
     moveTo(localFile, successDir);
@@ -82,7 +88,7 @@ public abstract class AbstractIngestToHDFSAction {
   }
   
   protected void moveTo(File localFile, String toFolder) {
-    if (localFile.renameTo(new File(processingDir + "/" + localFile.getName()))) {
+    if (localFile.renameTo(new File(toFolder + "/" + localFile.getName()))) {
       logger.info("moved " + localFile.getName() + " to "+ toFolder);
     } else {
       logger.error("unable to moved " + localFile.getName() + " to "+ toFolder);
