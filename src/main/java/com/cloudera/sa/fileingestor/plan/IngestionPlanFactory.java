@@ -1,0 +1,111 @@
+package com.cloudera.sa.fileingestor.plan;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
+
+import com.cloudera.sa.fileingestor.model.DstPojo;
+import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
+
+public class IngestionPlanFactory {
+  
+  static Logger logger = Logger.getLogger(IngestionPlanFactory.class);
+  
+  public static String LOCAL_SCR_DIR = "local.scr.dir";
+  public static String LOCAL_WORKING_DIR = "local.working.dir";
+  public static String FILE_INGESTION_TYPE = "file.ingestion.type";
+  public static String NUMBER_OF_THREADS = "number.of.threads";
+  public static String HDFS_COPY_TYPE = "hdfs.copy.type";
+  public static String DST_PREFIX = "dst.";
+  public static String DST_PATH = "path";
+  public static String DST_OWNER = "owner";
+  public static String DST_GROUP = "group";
+  public static String DST_PERMISSION = "permission";
+  public static String DST_CREATE_DIR = "createDir";
+  public static String DST_REPLACE_EXISTING_FILE = "replaceExistingFile";
+  
+  public static IngestionPlanPojo getInstance(Properties p) {
+    IngestionPlanPojo result = new IngestionPlanPojo();
+    
+    String localScrDir = p.getProperty(LOCAL_SCR_DIR);
+    if (localScrDir == null || localScrDir.isEmpty()) {
+      logger.error(LOCAL_SCR_DIR + " has no value");
+      throw new RuntimeException(LOCAL_SCR_DIR + " has no value");
+    }
+    logger.info(LOCAL_SCR_DIR + " = " + localScrDir);
+    result.setSourceLocalDir(localScrDir);
+    
+    String localWorkingDir = p.getProperty(LOCAL_WORKING_DIR);
+    if (localWorkingDir == null || localWorkingDir.isEmpty()) {
+      logger.error(LOCAL_WORKING_DIR + " has no value");
+      throw new RuntimeException(LOCAL_WORKING_DIR + " has no value");
+    }
+    logger.info(LOCAL_WORKING_DIR + " = " + localWorkingDir);    
+    result.setWorkingLocalDir(localWorkingDir);
+    
+    String numberOfThreads = p.getProperty(NUMBER_OF_THREADS);
+    int numOfThreads = 1;
+    if (numberOfThreads != null && !numberOfThreads.isEmpty()) {
+      try {
+        numOfThreads = Integer.parseInt(numberOfThreads);
+      } catch (Exception e) {
+        logger.error(NUMBER_OF_THREADS + " not a valid number '" + numberOfThreads + "'");
+        throw new RuntimeException(NUMBER_OF_THREADS + " not a valid number '" + numberOfThreads + "'");
+      }
+    }
+    logger.info(NUMBER_OF_THREADS + " = " + numberOfThreads); 
+    result.setNumberOfThreads(numOfThreads);
+    
+    HashMap<String, DstPojo> dstMap = new HashMap<String, DstPojo>();
+    
+    for (Entry<Object, Object> entry: p.entrySet()) {
+      String key = entry.getKey().toString();
+      if (key.startsWith(DST_PREFIX)) {
+        String[] parts = key.split("\\.");
+        if (parts.length == 3) {
+          DstPojo dst = dstMap.get(parts[1]);
+          if (dst == null) {
+            dst = new DstPojo(parts[2]);
+            dstMap.put(key, dst);
+          }
+          
+          try {
+            if (parts[2].equals(DST_PATH)){
+              dst.setPath(entry.getValue().toString());
+            } else if (parts[2].equals(DST_OWNER)){
+              dst.setOwner(entry.getValue().toString());
+            } else if (parts[2].equals(DST_GROUP)){
+              dst.setGroup(entry.getValue().toString());
+            } else if (parts[2].equals(DST_PERMISSION)){
+              dst.setPermissions(Short.parseShort(entry.getValue().toString() ) );
+            } else if (parts[2].equals(DST_CREATE_DIR)){
+              dst.setCreateDir(Boolean.parseBoolean(entry.getValue().toString()));
+            } else if (parts[2].equals(DST_REPLACE_EXISTING_FILE)){
+              dst.setReplaceIfFileExist(Boolean.parseBoolean(entry.getValue().toString()));
+            } 
+          } catch (Exception e) {
+            throw new RuntimeException(key + " value is malformed. '" + entry.getValue() + "' is not a valid value.");
+          }
+        } else {
+          throw new RuntimeException(key + " is malformed ");
+        }
+      }
+    }
+    
+    ArrayList<DstPojo> dstList = new ArrayList<DstPojo>();
+    
+    if (dstMap.size() == 0) {
+      throw new RuntimeException("no distinations defined");
+    }
+    
+    for (DstPojo dst: dstMap.values()) {
+      dstList.add(dst);
+    }
+    result.setDstList(dstList);
+    
+    return result;
+  }
+}
