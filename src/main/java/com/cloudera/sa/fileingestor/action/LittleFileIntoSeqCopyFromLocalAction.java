@@ -30,10 +30,15 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
 
   @Override
   protected void ingestDataToHdfsDir() throws IOException {
+    
+    
+    
     Configuration config = new Configuration();
     fs = FileSystem.get(new Configuration());
     
     Path dstSeqFilePath = new Path(distination.getPath() + "/" + planPojo.getJobId() + ".seq");
+    
+    logger.info("Creating Seq file to store small files at path " + dstSeqFilePath);
     
     SequenceFile.Writer out = 
         SequenceFile.createWriter(fs, config, dstSeqFilePath,
@@ -43,11 +48,14 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
                                   new SnappyCodec(), 
                                   null);
     
-    File sourceFolder = new File(sourceDir);
+    File processingDirFile = new File(processingDir);
     Text key = new Text();
     Text value = new Text();
     
-    for (File file: sourceFolder.listFiles()) {
+    logger.info("Files: " + processingDirFile.listFiles().length);
+    
+    for (File file: processingDirFile.listFiles()) {
+      
       if (file.length() < 1024 * 1024 * 5) {
         byte[] byteArray = new byte[(int)file.length()];
         BufferedInputStream input = new BufferedInputStream(new FileInputStream(file));
@@ -61,6 +69,10 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
         value.set(readByteArray);
         
         out.append(key, value);
+        
+        logger.info("Write Seq Record: " + key);
+        
+        input.close();
         
       } else {
         logger.error("file: " + file.getName() + " was to large at " + file.length() + " bytes");  
