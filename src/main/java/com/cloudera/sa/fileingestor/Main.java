@@ -12,6 +12,7 @@ import com.cloudera.sa.fileingestor.action.BigFileIngestToHDFSAction;
 import com.cloudera.sa.fileingestor.action.CreateLocalWorkingDirAction;
 import com.cloudera.sa.fileingestor.action.DistCpCopyAction;
 import com.cloudera.sa.fileingestor.action.LittleFileIntoSeqCopyFromLocalAction;
+import com.cloudera.sa.fileingestor.action.LittleFileIntoAvroCopyFromLocalAction;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo.FileIngestionType;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo.HdfsCopyMethodType;
@@ -48,7 +49,11 @@ public class Main {
       LittleFileIntoSeqCopyFromLocalAction littleFileIntoSeqCopyFromLocalAction = new LittleFileIntoSeqCopyFromLocalAction(planPojo);
       littleFileIntoSeqCopyFromLocalAction.run();
       fileStatusList = littleFileIntoSeqCopyFromLocalAction.getCopiedFileStatuses();
-    } else {
+    } else if (planPojo.getFileIngestionType().equals(FileIngestionType.AVRO_SMALL_FILES)) {
+		LittleFileIntoAvroCopyFromLocalAction littleFileIntoAvroCopyFromLocalAction = new LittleFileIntoAvroCopyFromLocalAction(planPojo);
+		littleFileIntoAvroCopyFromLocalAction.run();
+		fileStatusList = littleFileIntoAvroCopyFromLocalAction.getCopiedFileStatuses();
+	} else {
       throw new RuntimeException("not support operation yet. " + planPojo.getFileIngestionType());
     }
     logger.info("Files Copied to HDFS: " + fileStatusList.size());
