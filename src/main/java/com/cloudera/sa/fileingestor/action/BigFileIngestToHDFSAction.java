@@ -11,6 +11,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsPermission;
 
+import org.apache.commons.io.FileUtils;
 import com.cloudera.sa.fileingestor.model.DstPojo;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
 
@@ -32,7 +33,7 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
     
     ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
     
-    for (File file: new File(processingDir).listFiles()) {
+    for (File file:  FileUtils.listFiles(new File(processingDir), null, true)) {
       executorService.execute(new CopyFileToHDFSThread(file));
     }
     executorService.shutdown();
@@ -51,7 +52,9 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
     @Override
     public void run() {
       
-      Path dstPath = new Path(distination.getPath() + "/" + sourceFile.getName());
+      File processingDirFile = new File(processingDir);
+      
+      Path dstPath = new Path(distination.getPath() + sourceFile.getPath().substring(processingDirFile.getPath().length()));
       
       logger.info("Starting to ingest " + sourceFile + " to distiniation " + distination.getName() + " to location " + dstPath);
       

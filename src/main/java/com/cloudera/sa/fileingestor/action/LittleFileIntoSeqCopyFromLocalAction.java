@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -54,7 +55,9 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
     
     logger.info("Files: " + processingDirFile.listFiles().length);
     
-    for (File file: processingDirFile.listFiles()) {
+    for (File file: FileUtils.listFiles(processingDirFile, null, true)) {
+      
+      String filePath = file.getPath().substring(processingDirFile.getPath().length());
       
       if (file.length() < 1024 * 1024 * 5) {
         byte[] byteArray = new byte[(int)file.length()];
@@ -62,7 +65,7 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
         
         int byteRead = input.read(byteArray);
         
-        key.set(file.getName());
+        key.set(filePath);
         
         byte[] readByteArray = new byte[byteRead];
         System.arraycopy(byteArray, 0, readByteArray, 0, byteRead);
@@ -75,7 +78,7 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
         input.close();
         
       } else {
-        logger.error("file: " + file.getName() + " was to large at " + file.length() + " bytes");  
+        logger.error("file: " + filePath + " was to large at " + file.length() + " bytes");  
       }
     }
     out.close();
