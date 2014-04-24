@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.log4j.Logger;
 
@@ -68,7 +69,7 @@ public abstract class AbstractIngestToHDFSAction {
   protected void moveFilesToProcessFolder() {
     File sourceDirFile = new File(sourceDir);
     
-    for (File file: sourceDirFile.listFiles()) {
+    for (File file: FileUtils.listFiles(sourceDirFile, null, true)) {
       if (file.renameTo(new File(processingDir + "/" + file.getName()))) {
         logger.info("moved " + file.getName() + " to "+ processingDir);
       } else {
