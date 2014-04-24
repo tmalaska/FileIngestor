@@ -53,7 +53,7 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
     Text key = new Text();
     Text value = new Text();
     
-    logger.info("Files: " + processingDirFile.listFiles().length);
+    logger.info("Files: " + FileUtils.listFiles(processingDirFile, null, true).size());
     
     for (File file: FileUtils.listFiles(processingDirFile, null, true)) {
       

@@ -64,9 +64,11 @@ public abstract class AbstractIngestToHDFSAction {
     }
     logger.info("successfully created" + dir);
   }
-  
+   
   protected void moveFilesToProcessFolder() {
     File sourceDirFile = new File(sourceDir);
+    
+    logger.info("moveFilesToProcessFolder: " + sourceDirFile + ":" + sourceDirFile.listFiles().length + " -> " + processingDir);
     
     for (File file: sourceDirFile.listFiles()) {
       if (file.renameTo(new File(processingDir + "/" + file.getName()))) {

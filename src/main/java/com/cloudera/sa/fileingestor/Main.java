@@ -39,6 +39,7 @@ public class Main {
     
     ArrayList<FileStatus> fileStatusList = new ArrayList<FileStatus>();
     
+    logger.info("Version 0.01");
     logger.info("About to copy to HDFS: " + planPojo.getFileIngestionType());
     
     if (planPojo.getFileIngestionType().equals(FileIngestionType.BIG_FILES)) {
@@ -60,6 +61,7 @@ public class Main {
     
     if (fileStatusList.size() > 0) {
       if (planPojo.getHdfsCopyMethod().equals(HdfsCopyMethodType.DISTCP)) {
+        
         DistCpCopyAction distCpCopyAction = new DistCpCopyAction(fileStatusList, planPojo);
         distCpCopyAction.run();
       } else {

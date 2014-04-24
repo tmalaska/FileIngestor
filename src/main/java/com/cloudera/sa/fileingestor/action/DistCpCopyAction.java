@@ -33,11 +33,17 @@ public class DistCpCopyAction {
   public void run() throws Exception {
     fs = FileSystem.get(new Configuration());
     
-    String[] args = new String[fileStatuses.size() + 1];
+    //String[] args = new String[fileStatuses.size() + 1];
+    String[] args = new String[2];
     int counter = 0;
-    for (FileStatus fileStatus: fileStatuses) {
-      args[counter++] = fileStatus.getPath().toString();
-    }
+    
+    
+    
+    //for (FileStatus fileStatus: fileStatuses) {
+    //  args[counter++] = fileStatus.getPath().toString();
+    //}
+    
+    args[counter++] = planPojo.getDstList().get(0).getPath();
     
     logger.info("planPojo.getDstList().size(): " + planPojo.getDstList().size());
     
