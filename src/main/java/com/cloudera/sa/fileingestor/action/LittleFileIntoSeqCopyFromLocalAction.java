@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.SnappyCodec;
@@ -44,14 +45,14 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
     SequenceFile.Writer out = 
         SequenceFile.createWriter(fs, config, dstSeqFilePath,
                                   Text.class,
-                                  Text.class,
+                                  BytesWritable.class,
                                   SequenceFile.CompressionType.BLOCK, 
                                   new SnappyCodec(), 
                                   null);
     
     File processingDirFile = new File(processingDir);
     Text key = new Text();
-    Text value = new Text();
+    BytesWritable value = new BytesWritable();
     
     logger.info("Files: " + FileUtils.listFiles(processingDirFile, null, true).size());
     
@@ -67,9 +68,7 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
         
         key.set(filePath);
         
-        byte[] readByteArray = new byte[byteRead];
-        System.arraycopy(byteArray, 0, readByteArray, 0, byteRead);
-        value.set(readByteArray);
+        value.set(byteArray, 0, byteRead);
         
         out.append(key, value);
         

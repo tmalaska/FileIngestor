@@ -11,16 +11,15 @@ import org.apache.log4j.Logger;
 import com.cloudera.sa.fileingestor.action.BigFileIngestToHDFSAction;
 import com.cloudera.sa.fileingestor.action.CreateLocalWorkingDirAction;
 import com.cloudera.sa.fileingestor.action.DistCpCopyAction;
-import com.cloudera.sa.fileingestor.action.LittleFileIntoSeqCopyFromLocalAction;
 import com.cloudera.sa.fileingestor.action.LittleFileIntoAvroCopyFromLocalAction;
+import com.cloudera.sa.fileingestor.action.LittleFileIntoSeqCopyFromLocalAction;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo.FileIngestionType;
 import com.cloudera.sa.fileingestor.model.IngestionPlanPojo.HdfsCopyMethodType;
 import com.cloudera.sa.fileingestor.plan.IngestionPlanFactory;
 
-public class Main {
-  
-  static Logger logger = Logger.getLogger(Main.class);
+public class IngestMain {
+static Logger logger = Logger.getLogger(IngestMain.class);
   
   public static void main(String[] args) throws Exception {
     
@@ -51,10 +50,10 @@ public class Main {
       littleFileIntoSeqCopyFromLocalAction.run();
       fileStatusList = littleFileIntoSeqCopyFromLocalAction.getCopiedFileStatuses();
     } else if (planPojo.getFileIngestionType().equals(FileIngestionType.AVRO_SMALL_FILES)) {
-		LittleFileIntoAvroCopyFromLocalAction littleFileIntoAvroCopyFromLocalAction = new LittleFileIntoAvroCopyFromLocalAction(planPojo);
-		littleFileIntoAvroCopyFromLocalAction.run();
-		fileStatusList = littleFileIntoAvroCopyFromLocalAction.getCopiedFileStatuses();
-	} else {
+    LittleFileIntoAvroCopyFromLocalAction littleFileIntoAvroCopyFromLocalAction = new LittleFileIntoAvroCopyFromLocalAction(planPojo);
+    littleFileIntoAvroCopyFromLocalAction.run();
+    fileStatusList = littleFileIntoAvroCopyFromLocalAction.getCopiedFileStatuses();
+  } else {
       throw new RuntimeException("not support operation yet. " + planPojo.getFileIngestionType());
     }
     logger.info("Files Copied to HDFS: " + fileStatusList.size());
