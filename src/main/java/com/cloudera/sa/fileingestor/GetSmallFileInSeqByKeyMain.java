@@ -38,6 +38,7 @@ public class GetSmallFileInSeqByKeyMain {
         output.write(value.copyBytes());
         output.flush();
         output.close();
+        foundFile = true;
       }
     }
 
@@ -45,6 +46,10 @@ public class GetSmallFileInSeqByKeyMain {
     
     if (!foundFile) {
       System.out.println("The file '" + keyToLookFor + "' was not found in the Seq file '" + args[0] + "'");
+    }
+    else {
+      System.out.println("The file '" + keyToLookFor + "' was found in the Seq file '" + args[0] + "'"
+          + " and was copied to '" + args[2] + "'");
     }
   }
 }

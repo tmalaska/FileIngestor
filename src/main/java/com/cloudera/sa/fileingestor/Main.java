@@ -18,9 +18,9 @@ public class Main {
     } else if (command.equals("explodSmallFileSeqToLocal")) {
       
     } else if (command.equals("listFilesInAvro")) {
-      
+      ListFilesInAvroMain.main(subArgs);
     } else if (command.equals("getSmallFileInAvroByKey")) {
-      
+      GetSmallFileInAvroByKeyMain.main(subArgs);
     } else if (command.equals("explodSmallFileAvroToLocal")) {
       
     } 
