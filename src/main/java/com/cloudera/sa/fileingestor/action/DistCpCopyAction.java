@@ -51,10 +51,10 @@ public class DistCpCopyAction {
       fs.setOwner(fileStatuses.get(0).getPath(), planPojo.getDstList().get(0)
           .getOwner(), planPojo.getDstList().get(0).getGroup());
       fs.setPermission(fileStatuses.get(0).getPath(), new FsPermission(
-          (short) planPojo.getDstList().get(0).getPermissions()));
+          Short.parseShort(planPojo.getDstList().get(0).getPermissions(), 8)));
       logger.info("Changing owner and permissions on: "
-          + fileStatuses.get(0).getPath() + " with octal: "
-          + (short) planPojo.getDstList().get(0).getPermissions());
+          + fileStatuses.get(0).getPath() + " with octal notation: "
+          +  planPojo.getDstList().get(0).getPermissions());
     } catch (Exception e2) {
       logger.error("Problem setting owner and permissions on file.");
     }
@@ -82,9 +82,9 @@ public class DistCpCopyAction {
         try {
           fs.setOwner(dstFile.getPath(), dst.getOwner(), dst.getGroup());
           
-          fs.setPermission(dstFile.getPath(), new FsPermission((short)dst.getPermissions()));
+          fs.setPermission(dstFile.getPath(), new FsPermission(Short.parseShort(dst.getPermissions(), 8)));
           
-          logger.info("Changing owner and permissions on: " + dstFile.getPath() + " with octal: " + (short)dst.getPermissions());
+          logger.info("Changing owner and permissions on: " + dstFile.getPath() + " with octal notation: " + dst.getPermissions());
           
         } catch (IOException e) {
           logger.error("Problem changing permission to owner:" + dst.getOwner() + " group:" +  dst.getGroup() + " on HDFS file " + dstFile.getPath(), e);

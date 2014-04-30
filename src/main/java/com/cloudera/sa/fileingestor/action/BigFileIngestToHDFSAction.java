@@ -54,22 +54,23 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
       
       File processingDirFile = new File(processingDir);
       
-      Path dstPath = new Path(distination.getPath() + sourceFile.getPath().substring(processingDirFile.getPath().length()));
+      Path dstPath = new Path(destination.getPath() + sourceFile.getPath().substring(processingDirFile.getPath().length()));
       
-      logger.info("Starting to ingest " + sourceFile + " to distiniation " + distination.getName() + " to location " + dstPath);
+      logger.info("Starting to ingest " + sourceFile + " to destiniation " + destination.getName() + " to location " + dstPath);
       
       try {
-        fs.copyFromLocalFile(false, distination.isReplaceIfFileExist(), new Path(sourceFile.getPath()), dstPath);
+        fs.copyFromLocalFile(false, destination.isReplaceIfFileExist(), new Path(sourceFile.getPath()), dstPath);
       } catch (IOException e) {
         logger.error("Problem while coping " + sourceFile, e);
         thisObj.moveToFailure(sourceFile);
       }
       try {
-        fs.setOwner(dstPath, distination.getOwner(), distination.getGroup());
-        fs.setPermission(dstPath, new FsPermission(distination.getPermissions()));
+        fs.setOwner(dstPath, destination.getOwner(), destination.getGroup());
+        fs.setPermission(dstPath, new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
+        logger.info("Changing owner and permissions on: " + dstPath + " with octal notation: " + destination.getPermissions());
         copiedFiles.add(fs.getFileStatus(dstPath));
       } catch (IOException e) {
-        logger.error("Problem changing permission to owner:" + distination.getOwner() + " group:" +  distination.getGroup() + " on HDFS file " + dstPath, e);
+        logger.error("Problem changing permission to owner:" + destination.getOwner() + " group:" +  destination.getGroup() + " on HDFS file " + dstPath, e);
         try {
           fs.delete(dstPath, false);
         } catch (IOException e1) {

@@ -19,7 +19,7 @@ public abstract class AbstractIngestToHDFSAction {
   String failureDir;
   String successDir;
   int numberOfThreads;
-  DstPojo distination;
+  DstPojo destination;
   ArrayList<FileStatus> copiedFiles = new ArrayList<FileStatus>();
   
   public static final String PROCESS_DIR = "processDir";
@@ -33,7 +33,7 @@ public abstract class AbstractIngestToHDFSAction {
     this.failureDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/failure";
     this.successDir = planPojo.getWorkingLocalDir() + "/" + planPojo.getJobId() + "/successful";
     
-    this.distination = planPojo.getDstList().get(0);
+    this.destination = planPojo.getDstList().get(0);
     this.numberOfThreads = planPojo.getNumberOfThreads();
   }
   

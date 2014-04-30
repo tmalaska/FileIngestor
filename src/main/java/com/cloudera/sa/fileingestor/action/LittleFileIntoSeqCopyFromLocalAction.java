@@ -38,7 +38,7 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
     Configuration config = new Configuration();
     fs = FileSystem.get(new Configuration());
     
-    Path dstSeqFilePath = new Path(distination.getPath() + "/" + planPojo.getJobId() + ".seq");
+    Path dstSeqFilePath = new Path(destination.getPath() + "/" + planPojo.getJobId() + ".seq");
     
     logger.info("Creating Seq file to store small files at path " + dstSeqFilePath);
     

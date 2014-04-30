@@ -42,7 +42,7 @@ public class LittleFileIntoAvroCopyFromLocalAction extends AbstractIngestToHDFSA
 
     logger.info("Files: " + processingDirFile.listFiles().length);
 
-    Path dstAvroFilePath = new Path(distination.getPath() + "/" + planPojo.getJobId() + ".avro");
+    Path dstAvroFilePath = new Path(destination.getPath() + "/" + planPojo.getJobId() + ".avro");
 
     logger.info("Creating Avro file to store small files at path " + dstAvroFilePath);
 

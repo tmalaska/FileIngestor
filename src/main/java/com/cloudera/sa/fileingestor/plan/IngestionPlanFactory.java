@@ -101,7 +101,7 @@ public class IngestionPlanFactory {
             } else if (parts[2].equals(DST_GROUP)){
               dst.setGroup(entry.getValue().toString());
             } else if (parts[2].equals(DST_PERMISSION)){
-              dst.setPermissions(Short.parseShort(entry.getValue().toString() ) );
+              dst.setPermissions(entry.getValue().toString());
             } else if (parts[2].equals(DST_CREATE_DIR)){
               dst.setCreateDir(Boolean.parseBoolean(entry.getValue().toString()));
             } else if (parts[2].equals(DST_REPLACE_EXISTING_FILE)){

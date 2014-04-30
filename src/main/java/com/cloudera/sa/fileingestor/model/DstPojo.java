@@ -5,7 +5,7 @@ public class DstPojo {
   String path;
   String owner;
   String group;
-  short permissions;
+  String permissions;
   boolean createDir;
   boolean replaceIfFileExist;
   
@@ -16,10 +16,10 @@ public class DstPojo {
     owner = "hdfs";
     group = "supergroup";
     path = "/tmp";
-    permissions = 777;
+    permissions = "777";
   };
   
-  public DstPojo(String name, String path, String owner, String group, short permissions, boolean createDir, boolean replaceIfFileExist) {
+  public DstPojo(String name, String path, String owner, String group, String permissions, boolean createDir, boolean replaceIfFileExist) {
     super();
     this.name = name;
     this.path = path;
@@ -54,10 +54,10 @@ public class DstPojo {
   public void setGroup(String group) {
     this.group = group;
   }
-  public short getPermissions() {
+  public String getPermissions() {
     return permissions;
   }
-  public void setPermissions(short permissions) {
+  public void setPermissions(String permissions) {
     this.permissions = permissions;
   }
   public boolean isCreateDir() {
