@@ -65,6 +65,8 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
         thisObj.moveToFailure(sourceFile);
       }
       try {
+        fs.setOwner(dstPath.getParent(), destination.getOwner(), destination.getGroup());
+        fs.setPermission(dstPath.getParent(), new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
         fs.setOwner(dstPath, destination.getOwner(), destination.getGroup());
         fs.setPermission(dstPath, new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
         logger.info("Changing owner and permissions on: " + dstPath + " with octal notation: " + destination.getPermissions());

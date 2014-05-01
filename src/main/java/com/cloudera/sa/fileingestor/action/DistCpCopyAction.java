@@ -33,21 +33,18 @@ public class DistCpCopyAction {
   public void run() throws Exception {
     fs = FileSystem.get(new Configuration());
     
-    //String[] args = new String[fileStatuses.size() + 1];
     String[] args = new String[2];
     int counter = 0;
-    
-    
-    
-    //for (FileStatus fileStatus: fileStatuses) {
-    //  args[counter++] = fileStatus.getPath().toString();
-    //}
-    
+        
     args[counter++] = planPojo.getDstList().get(0).getPath();
     
     logger.info("planPojo.getDstList().size(): " + planPojo.getDstList().size());
 
     try {
+      fs.setOwner(new Path(planPojo.getDstList().get(0).getPath()),  planPojo.getDstList().get(0)
+          .getOwner(), planPojo.getDstList().get(0).getGroup());
+      fs.setPermission(new Path(planPojo.getDstList().get(0).getPath()), new FsPermission(
+            Short.parseShort(planPojo.getDstList().get(0).getPermissions(), 8)));
       fs.setOwner(fileStatuses.get(0).getPath(), planPojo.getDstList().get(0)
           .getOwner(), planPojo.getDstList().get(0).getGroup());
       fs.setPermission(fileStatuses.get(0).getPath(), new FsPermission(
@@ -80,8 +77,9 @@ public class DistCpCopyAction {
       
       for (FileStatus dstFile: dstFiles) {
         try {
-          fs.setOwner(dstFile.getPath(), dst.getOwner(), dst.getGroup());
-          
+          fs.setOwner(new Path(dst.getPath()), dst.getOwner(), dst.getGroup());            
+          fs.setPermission(new Path(dst.getPath()), new FsPermission(Short.parseShort(dst.getPermissions(), 8)));
+          fs.setOwner(dstFile.getPath(), dst.getOwner(), dst.getGroup());          
           fs.setPermission(dstFile.getPath(), new FsPermission(Short.parseShort(dst.getPermissions(), 8)));
           
           logger.info("Changing owner and permissions on: " + dstFile.getPath() + " with octal notation: " + dst.getPermissions());
