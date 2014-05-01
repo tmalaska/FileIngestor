@@ -65,11 +65,11 @@ public class LittleFileIntoAvroCopyFromLocalAction extends AbstractIngestToHDFSA
       if (file.length() < 1024 * 1024 * 5) {
         byte content[] = FileUtils.readFileToByteArray(file);
         GenericRecord record = new GenericData.Record(SCHEMA);
-        record.put(FIELD_FILENAME, filePath);
+        record.put(FIELD_FILENAME, filePath  + "~" + file.length());
         record.put(FIELD_CONTENTS, ByteBuffer.wrap(content));
         writer.append(record);
 
-        key.set(file.getName());
+        key.set(filePath  + "~" + file.length());
         logger.info("Write Avro Record: " + key);
 
       } else {

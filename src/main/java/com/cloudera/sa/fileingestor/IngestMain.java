@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.cloudera.sa.fileingestor.action.BigFileIngestToHDFSAction;
 import com.cloudera.sa.fileingestor.action.CreateLocalWorkingDirAction;
@@ -22,6 +23,9 @@ public class IngestMain {
 static Logger logger = Logger.getLogger(IngestMain.class);
   
   public static void main(String[] args) throws Exception {
+    
+    String log4jConfPath = "./log4j.properties";
+    PropertyConfigurator.configure(log4jConfPath);
     
     if (args.length == 0) {
       System.out.println("fileIngestor <propertiesFilePath>");

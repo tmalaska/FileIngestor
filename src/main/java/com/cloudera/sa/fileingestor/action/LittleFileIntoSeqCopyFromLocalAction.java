@@ -66,7 +66,7 @@ public class LittleFileIntoSeqCopyFromLocalAction extends AbstractIngestToHDFSAc
         
         int byteRead = input.read(byteArray);
         
-        key.set(filePath);
+        key.set(filePath + "~" + file.length());
         
         value.set(byteArray, 0, byteRead);
         
