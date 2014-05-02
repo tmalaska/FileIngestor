@@ -54,5 +54,6 @@ public class GetSmallFileInAvroByKeyMain {
       System.out.println("The file '" + keyToLookFor + "' was found in the Avro file '" + args[0] + "'"
           + " and was copied to '" + args[2] + "'");
     }
+    reader.close();
   }
 }

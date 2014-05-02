@@ -19,7 +19,6 @@ public class ListFilesInAvroMain {
     }
 
     final String FIELD_FILENAME = "filename";
-    final String FIELD_CONTENTS = "contents";
 
     Configuration config = new Configuration();
     FileSystem hdfs = FileSystem.get(config);
