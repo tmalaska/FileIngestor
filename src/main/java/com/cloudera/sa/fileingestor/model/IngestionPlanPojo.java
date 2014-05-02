@@ -7,6 +7,7 @@ public class IngestionPlanPojo {
 
   String sourceLocalDir;
   String workingLocalDir;
+  String smallContainerFileNameOverride;
   long jobId;
   int numberOfThreads;
   FileIngestionType fileIngestionType;
@@ -121,6 +122,15 @@ public class IngestionPlanPojo {
 
   public void setDstList(ArrayList<DstPojo> dstList) {
     this.dstList = dstList;
+  }
+
+  public void setSmallContainerFileNameOverride(String smallContainerFileNameOverride) {
+    this.smallContainerFileNameOverride = smallContainerFileNameOverride;
+    
+  }
+  
+  public String getSmallContainerFileNameOverride() {
+    return smallContainerFileNameOverride;
   }
   
   

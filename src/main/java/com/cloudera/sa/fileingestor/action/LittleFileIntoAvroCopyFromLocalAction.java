@@ -42,16 +42,25 @@ public class LittleFileIntoAvroCopyFromLocalAction extends AbstractIngestToHDFSA
 
     logger.info("Files: " + processingDirFile.listFiles().length);
 
-    Path dstAvroFilePath = new Path(destination.getPath() + "/" + planPojo.getJobId() + ".avro");
+    String dstFileName = planPojo.getSmallContainerFileNameOverride();
+    
+    if (dstFileName == null) {
+      dstFileName = planPojo.getJobId() + ".seq";
+    } 
+    
+    Path dstAvroFilePath = new Path(destination.getPath() + "/" + dstFileName);
 
     logger.info("Creating Avro file to store small files at path " + dstAvroFilePath);
 
     OutputStream os = fs.create(dstAvroFilePath);
 
     final String FIELD_FILENAME = "filename";
+    final String FIELD_FILESIZE = "filesize";
     final String FIELD_CONTENTS = "contents";
-    final String SCHEMA_JSON = "{\"type\": \"record\", \"name\": \"SmallFilesAvro\", " + "\"fields\": [" + "{\"name\":\"" + FIELD_FILENAME
-        + "\", \"type\":\"string\"}," + "{\"name\":\"" + FIELD_CONTENTS + "\", \"type\":\"bytes\"}]}";
+    final String SCHEMA_JSON = "{\"type\": \"record\", \"name\": \"SmallFilesAvro\", " + "\"fields\": [" + 
+        "{\"name\":\"" + FIELD_FILENAME + "\", \"type\":\"string\"}," +
+        "{\"name\":\"" + FIELD_FILESIZE + "\", \"type\":\"long\"}," +
+        "{\"name\":\"" + FIELD_CONTENTS + "\", \"type\":\"bytes\"}]}";
     final Schema SCHEMA = Schema.parse(SCHEMA_JSON);
 
     DataFileWriter<Object> writer = new DataFileWriter<Object>(new GenericDatumWriter<Object>()).setSyncInterval(100);
@@ -65,12 +74,12 @@ public class LittleFileIntoAvroCopyFromLocalAction extends AbstractIngestToHDFSA
       if (file.length() < 1024 * 1024 * 5) {
         byte content[] = FileUtils.readFileToByteArray(file);
         GenericRecord record = new GenericData.Record(SCHEMA);
-        record.put(FIELD_FILENAME, filePath  + "~" + file.length());
+        record.put(FIELD_FILENAME, filePath);
+        record.put(FIELD_FILESIZE, file.length());
         record.put(FIELD_CONTENTS, ByteBuffer.wrap(content));
         writer.append(record);
 
-        key.set(filePath  + "~" + file.length());
-        logger.info("Write Avro Record: " + key);
+        logger.info("Write Avro Record: " + filePath  + "~" + file.length());
 
       } else {
         logger.error("file: " + filePath + " was too large at " + file.length() + " bytes");

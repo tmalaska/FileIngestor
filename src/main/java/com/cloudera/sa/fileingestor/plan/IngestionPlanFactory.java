@@ -27,6 +27,7 @@ public class IngestionPlanFactory {
   public static String DST_PERMISSION = "permission";
   public static String DST_CREATE_DIR = "createDir";
   public static String DST_REPLACE_EXISTING_FILE = "replaceExistingFile";
+  public static String SMALL_CONTAINER_FILE_NAME_OVERRIDE = "small.container.file.name.override";
   
   
   
@@ -76,6 +77,10 @@ public class IngestionPlanFactory {
     }
     logger.info(NUMBER_OF_THREADS + " = " + numberOfThreads); 
     result.setNumberOfThreads(numOfThreads);
+    
+    String smallContainerFileNameOverride = p.getProperty(SMALL_CONTAINER_FILE_NAME_OVERRIDE);
+    logger.info(SMALL_CONTAINER_FILE_NAME_OVERRIDE + " = " + smallContainerFileNameOverride);
+    result.setSmallContainerFileNameOverride(smallContainerFileNameOverride);
     
     HashMap<String, DstPojo> dstMap = new HashMap<String, DstPojo>();
     

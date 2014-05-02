@@ -58,9 +58,21 @@ public class CombineSmallFileSeqFiles {
   }
   
   public static class CustomMapper extends Mapper<Text, BytesWritable, Text, BytesWritable> {
+    
+    long isFirst = 0;
+    
     @Override
     public void map(Text key, BytesWritable value, Context context) throws IOException, InterruptedException {
+      
+      if (isFirst++ < 100) {
+        System.out.println("key:" + key.toString());
+      }
+      
+      long startTime = System.currentTimeMillis();
       context.write(key, value);
+      context.getCounter("custom", "write.context.time").increment(System.currentTimeMillis() - startTime);
+      
+      
     }
   }
   

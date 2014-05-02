@@ -1,5 +1,8 @@
 package com.cloudera.sa.fileingestor;
 
+import com.cloudera.sa.fileingestor.aftercopy.CopyFromStaging;
+import com.cloudera.sa.fileingestor.aftercopy.CopyToStaging;
+
 
 public class Main {
   
@@ -24,9 +27,13 @@ public class Main {
     } else if (command.equals("explodSmallFileAvroToLocal")) {
       
     } else if (command.equals("combineSmallFileSeqFiles")) {
-      
+      CombineSmallFileSeqFiles.main(subArgs);
     } else if (command.equals("combineSmallFileAvroFiles")) {
       
+    } else if (command.equals("CopyToStaging")) {
+      CopyToStaging.main(subArgs);
+    } else if (command.equals("CopyFromStaging")) {
+      CopyFromStaging.main(subArgs);
     } else {
       System.out.println("Unknown command: " + command);
       System.out.println("----------------------------");
@@ -41,6 +48,8 @@ public class Main {
       System.out.println("explodSmallFileAvroToLocal - This will explode all small files in a seq file to local");
       System.out.println("combineSmallFileSeqFiles - This will take N number of seq files in HDFS and combin them to N less number of files");
       System.out.println("combineSmallFileAvroFiles - This will take N number of avro files in HDFS and combin them to N less number of files");
+      System.out.println("CopyToStaging");
+      System.out.println("CopyFromStaging");
     }
   }
 }

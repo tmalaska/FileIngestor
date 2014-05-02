@@ -82,5 +82,6 @@ public class DstPojo {
         createDir + "|" + 
         replaceIfFileExist + "|";
   }
+
   
 }
