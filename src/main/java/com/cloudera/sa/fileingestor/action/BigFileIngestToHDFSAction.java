@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.permission.FsPermission;
@@ -65,14 +66,15 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
         thisObj.moveToFailure(sourceFile);
       }
       try {
-        fs.setOwner(dstPath.getParent(), destination.getOwner(), destination.getGroup());
-        fs.setPermission(dstPath.getParent(), new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
-        fs.setOwner(dstPath, destination.getOwner(), destination.getGroup());
-        fs.setPermission(dstPath, new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
-        logger.info("Changing owner and permissions on: " + dstPath + " with octal notation: " + destination.getPermissions());
-        copiedFiles.add(fs.getFileStatus(dstPath));
+    	  fs.setOwner(dstPath.getParent(), destination.getOwner(), destination.getGroup());
+    	  fs.setPermission(dstPath.getParent(), new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
+    	  fs.setOwner(dstPath, destination.getOwner(), destination.getGroup());
+    	  fs.setPermission(dstPath, new FsPermission(Short.parseShort(destination.getPermissions(), 8)));
+    	  logger.info("Changing owner and permissions on: " + dstPath + " with octal notation: " + destination.getPermissions());
+    	  changePervs(fs, destination.getOwner(), destination.getGroup(), destination.getPermissions(), fs.getFileStatus(dstPath));
+    	  copiedFiles.add(fs.getFileStatus(dstPath));
       } catch (IOException e) {
-        logger.error("Problem changing permission to owner:" + destination.getOwner() + " group:" +  destination.getGroup() + " on HDFS file " + dstPath, e);
+    	  logger.error("Problem changing permission to owner:" + destination.getOwner() + " group:" +  destination.getGroup() + " on HDFS file " + dstPath, e);
         try {
           fs.delete(dstPath, false);
         } catch (IOException e1) {
@@ -82,11 +84,16 @@ public class BigFileIngestToHDFSAction extends AbstractIngestToHDFSAction{
       }
       
     }
-    
 
   }
-
-
-
-  
+  private static void changePervs(FileSystem fs, String targetOwner, String targetGroup, String targetPerm, FileStatus fileStatus) throws IOException {
+	    logger.info("Update File Privs: " + fileStatus.getPath());
+	    fs.setOwner(fileStatus.getPath(), targetOwner, targetGroup);	
+	    fs.setPermission(fileStatus.getPath(), new FsPermission(Short.parseShort(targetPerm, 8)));
+	    if (fileStatus.isDirectory()) {
+	      for (FileStatus subFileStatus: fs.listStatus(fileStatus.getPath())) {
+	        changePervs(fs, targetOwner, targetGroup, targetPerm, subFileStatus);
+	      }
+	    }
+	  }  
 }

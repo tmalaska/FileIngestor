@@ -20,7 +20,7 @@ import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
 
 public class DistCpCopyAction {
 
-  Logger logger = Logger.getLogger(DistCpCopyAction.class);
+  public static Logger logger = Logger.getLogger(DistCpCopyAction.class);
 
   ArrayList<FileStatus> fileStatuses;
   IngestionPlanPojo planPojo;
@@ -60,6 +60,9 @@ public class DistCpCopyAction {
       logger.info("Changing owner and permissions on: "
           + fileStatuses.get(0).getPath() + " with octal notation: "
           + planPojo.getDstList().get(0).getPermissions());
+      changePervs(fs, planPojo.getDstList().get(0).getOwner(), planPojo.getDstList().get(0)
+              .getGroup(), planPojo.getDstList().get(0)
+              .getPermissions(), fs.getFileStatus(new Path(planPojo.getDstList().get(0).getPath())));
     } catch (Exception e2) {
       logger.error("Problem setting owner and permissions on file.");
     }
@@ -80,35 +83,23 @@ public class DistCpCopyAction {
       int res = ToolRunner.run(distcp, args);
 
       logger.info("Finished DistCp: " + args);
-
-      RemoteIterator<LocatedFileStatus> dstFiles = fs.listFiles(
-          new Path(dst.getPath()), true);
-
-      while (dstFiles.hasNext())
+      
         try {
-          LocatedFileStatus dstLocFileStatus = dstFiles.next();
-
-          fs.setOwner(dstLocFileStatus.getPath(), dst.getOwner(),
-              dst.getGroup());
-          fs.setPermission(dstLocFileStatus.getPath(),
-              new FsPermission(Short.parseShort(dst.getPermissions(), 8)));
-
-          fs.setOwner(dstLocFileStatus.getPath().getParent(), dst.getOwner(),
-              dst.getGroup());
-          fs.setPermission(dstLocFileStatus.getPath().getParent(),
-              new FsPermission(Short.parseShort(dst.getPermissions(), 8)));
-
-          logger.info("Changing owner and permissions on: "
-              + dstLocFileStatus.getPath() + " with octal notation: "
-              + dst.getPermissions());
-
+          changePervs(fs, dst.getOwner(), dst.getGroup(), dst.getPermissions(), fs.getFileStatus(new Path(dst.getPath())));
         } catch (Exception e) {
-          logger.error(
-              "Problem changing permission to owner:" + dst.getOwner()
-                  + " group:" + dst.getGroup() + " on HDFS file "
-                  + dstFiles.toString(), e);
+          logger.error("Problem changing permission.", e);
         }
     }
     fs.close();
   }
+  private static void changePervs(FileSystem fs, String targetOwner, String targetGroup, String targetPerm, FileStatus fileStatus) throws IOException {
+	    logger.info("Update File Privs: " + fileStatus.getPath());
+	    fs.setOwner(fileStatus.getPath(), targetOwner, targetGroup);	
+	    fs.setPermission(fileStatus.getPath(), new FsPermission(Short.parseShort(targetPerm, 8)));
+	    if (fileStatus.isDirectory()) {
+	      for (FileStatus subFileStatus: fs.listStatus(fileStatus.getPath())) {
+	        changePervs(fs, targetOwner, targetGroup, targetPerm, subFileStatus);
+	      }
+	    }
+	  }
 }

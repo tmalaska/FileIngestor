@@ -12,7 +12,7 @@ import com.cloudera.sa.fileingestor.model.IngestionPlanPojo;
 
 public abstract class AbstractIngestToHDFSAction {
   
-  Logger logger = Logger.getLogger(AbstractIngestToHDFSAction.class);
+  static Logger logger = Logger.getLogger(AbstractIngestToHDFSAction.class);
   
   String sourceDir;
   String processingDir;

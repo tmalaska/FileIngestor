@@ -46,10 +46,10 @@ public class Main {
       System.out.println("listFilesInAvro - Outputs the list of files in a Avro file");
       System.out.println("getSmallFileInAvroByKey - This will get a small file out of a seq file");
       System.out.println("explodSmallFileAvroToLocal - This will explode all small files in a seq file to local");
-      System.out.println("combineSmallFileSeqFiles - This will take N number of seq files in HDFS and combin them to N less number of files");
-      System.out.println("combineSmallFileAvroFiles - This will take N number of avro files in HDFS and combin them to N less number of files");
-      System.out.println("CopyToStaging");
-      System.out.println("CopyFromStaging");
+      System.out.println("combineSmallFileSeqFiles - This will take N number of seq files in HDFS and combine them to N less number of files");
+      System.out.println("combineSmallFileAvroFiles - This will take N number of avro files in HDFS and combine them to N less number of files");
+      System.out.println("CopyToStaging - This will copy a directory in HDFS into a staging directory in HDFS");
+      System.out.println("CopyFromStaging - This will copy from staging directory in HDFS into a target directory also in HDFS");
     }
   }
 }

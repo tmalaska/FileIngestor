@@ -22,6 +22,8 @@ import org.apache.log4j.Logger;
 
 public class CopyFromStaging {
 
+	public static Logger logger = Logger.getLogger(CopyFromStaging.class);
+	
 	public static void main( String[] args ) throws IOException
 	{
 
@@ -46,22 +48,20 @@ public class CopyFromStaging {
 		DistCp distcp = new DistCp(job);
 		try {
 			int res = ToolRunner.run(distcp, distCpArgs );
-			
-			RemoteIterator<LocatedFileStatus> srcFiles = fs.listFiles(new Path(args[1]), true);
-			fs.setOwner(new Path(targetDir), null, targetGroup);
-			fs.setPermission(new Path(targetDir), new FsPermission(Short.parseShort(targetPerm, 8)));	
-			while (srcFiles.hasNext()) {
-				LocatedFileStatus srcLocFileStatus = srcFiles.next();
-				logger.info("File: " + srcLocFileStatus.getPath());
-				fs.setOwner(srcLocFileStatus.getPath(), null, targetGroup);	
-				fs.setPermission(srcLocFileStatus.getPath(), new FsPermission(Short.parseShort(targetPerm, 8)));				
-				fs.setOwner(srcLocFileStatus.getPath().getParent(), null, targetGroup);	
-				fs.setPermission(srcLocFileStatus.getPath().getParent(), new FsPermission(Short.parseShort(targetPerm, 8)));	
-			}
+			changePervs(fs, targetGroup, targetPerm, fs.getFileStatus(new Path(targetDir)));			
 		} catch (Exception e) {
 			logger.error(e);
 		}
 		logger.info("Finished DistCp");
 	}
-
+	private static void changePervs(FileSystem fs, String targetGroup, String targetPerm, FileStatus fileStatus) throws IOException {
+		logger.info("Update File Privs: " + fileStatus.getPath());
+		fs.setOwner(fileStatus.getPath(), null, targetGroup);	
+		fs.setPermission(fileStatus.getPath(), new FsPermission(Short.parseShort(targetPerm, 8)));
+		if (fileStatus.isDirectory()) {
+			for (FileStatus subFileStatus: fs.listStatus(fileStatus.getPath())) {
+				changePervs(fs, targetGroup, targetPerm, subFileStatus);
+			}
+		}
+	}
 }
