@@ -16,6 +16,8 @@ import org.apache.hadoop.tools.DistCp;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.log4j.Logger;
 
+import com.cloudera.sa.fileingestor.action.common.PrivsCommon;
+
 /**
  * HDFS Copy Utility - Copy from Source to Staging Directory
  *
@@ -50,21 +52,11 @@ public class CopyToStaging {
 		DistCp distcp = new DistCp(job);
 		try {
 			int res = ToolRunner.run(distcp, distCpArgs );
-			changePervs(fs, targetGroup, fs.getFileStatus(new Path(targetDir)));
+			PrivsCommon.changePervs(fs, targetGroup, "750", fs.getFileStatus(new Path(targetDir)));
 		} catch (Exception e) {
 			logger.error(e);
 		}
 		logger.info("Finished DistCp");
 	}
 
-  private static void changePervs(FileSystem fs, String targetGroup, FileStatus fileStatus) throws IOException {
-    logger.info("Update File Privs: " + fileStatus.getPath());
-    fs.setOwner(fileStatus.getPath(), null, targetGroup);	
-    fs.setPermission(fileStatus.getPath(), new FsPermission(Short.parseShort("750", 8)));
-    if (fileStatus.isDirectory()) {
-      for (FileStatus subFileStatus: fs.listStatus(fileStatus.getPath())) {
-        changePervs(fs, targetGroup, subFileStatus);
-      }
-    }
-  }
 }
