@@ -19,6 +19,7 @@ public class CombineSmallFileSeqFiles {
       System.out.println("CombineSmallFileSeqFiles");
       System.out.println();
       System.out.println("CombineSmallFileSeqFiles {inputPath} {outputPath} {numberOfReducers}");
+      return;
     }
     
     String inputPath = args[0];

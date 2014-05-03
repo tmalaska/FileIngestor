@@ -12,24 +12,24 @@ public class Main {
     String[] subArgs = new String[args.length - 1];
     System.arraycopy(args, 1, subArgs, 0, args.length - 1);
     
-    if (command.equals("Ingest")) {
+    if (command.equals("ingest")) {
       IngestMain.main(subArgs);
     } else if (command.equals("listFilesInSeq")) {
       ListFilesInSeqMain.main(subArgs);
     } else if (command.equals("getSmallFileInSeqByKey")) {
       GetSmallFileInSeqByKeyMain.main(subArgs);
     } else if (command.equals("explodSmallFileSeqToLocal")) {
-      
+      System.out.println("Not implemented yet");
     } else if (command.equals("listFilesInAvro")) {
       ListFilesInAvroMain.main(subArgs);
     } else if (command.equals("getSmallFileInAvroByKey")) {
       GetSmallFileInAvroByKeyMain.main(subArgs);
     } else if (command.equals("explodSmallFileAvroToLocal")) {
-      
+      System.out.println("Not implemented yet");
     } else if (command.equals("combineSmallFileSeqFiles")) {
       CombineSmallFileSeqFiles.main(subArgs);
     } else if (command.equals("combineSmallFileAvroFiles")) {
-      
+      System.out.println("Not implemented yet");
     } else if (command.equals("CopyToStaging")) {
       CopyToStaging.main(subArgs);
     } else if (command.equals("CopyFromStaging")) {
@@ -39,7 +39,7 @@ public class Main {
       System.out.println("----------------------------");
       System.out.println("- Possible Commands -");
       System.out.println("----------------------------");
-      System.out.println("Ingest - Ingestion files from a given directory");
+      System.out.println("ingest - Ingestion files from a given directory");
       System.out.println("listFilesInSeq - Outputs the list of files in a Seq file");
       System.out.println("getSmallFileInSeqByKey - This will get a small file out of a seq file");
       System.out.println("explodSmallFileSeqToLocal - This will explode all small files in a seq file to local");
