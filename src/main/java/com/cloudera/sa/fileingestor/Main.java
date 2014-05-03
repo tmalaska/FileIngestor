@@ -30,9 +30,9 @@ public class Main {
       CombineSmallFileSeqFiles.main(subArgs);
     } else if (command.equals("combineSmallFileAvroFiles")) {
       System.out.println("Not implemented yet");
-    } else if (command.equals("CopyToStaging")) {
+    } else if (command.equals("copyToStaging")) {
       CopyToStaging.main(subArgs);
-    } else if (command.equals("CopyFromStaging")) {
+    } else if (command.equals("copyFromStaging")) {
       CopyFromStaging.main(subArgs);
     } else {
       System.out.println("Unknown command: " + command);
@@ -48,8 +48,8 @@ public class Main {
       System.out.println("explodSmallFileAvroToLocal - This will explode all small files in a seq file to local");
       System.out.println("combineSmallFileSeqFiles - This will take N number of seq files in HDFS and combine them to N less number of files");
       System.out.println("combineSmallFileAvroFiles - This will take N number of avro files in HDFS and combine them to N less number of files");
-      System.out.println("CopyToStaging - This will copy a directory in HDFS into a staging directory in HDFS");
-      System.out.println("CopyFromStaging - This will copy from staging directory in HDFS into a target directory also in HDFS");
+      System.out.println("copyToStaging - This will copy a directory in HDFS into a staging directory in HDFS");
+      System.out.println("copyFromStaging - This will copy from staging directory in HDFS into a target directory also in HDFS");
     }
   }
 }

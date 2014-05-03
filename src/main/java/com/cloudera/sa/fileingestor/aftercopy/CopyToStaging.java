@@ -32,6 +32,11 @@ public class CopyToStaging {
 	public static void main( String[] args ) throws IOException
 	{
 
+	  if (args.length == 0) {
+	    System.out.println("copyToStaging {srcDir} {targetDir} {targetGroup}");
+	    return;
+	  }
+	  
 	  logger.info( "Starting CopyToStaging." );	
 		FileSystem fs = FileSystem.get(new Configuration());
 

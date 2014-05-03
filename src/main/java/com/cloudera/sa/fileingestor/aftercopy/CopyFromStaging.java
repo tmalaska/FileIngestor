@@ -29,6 +29,11 @@ public class CopyFromStaging {
 	public static void main( String[] args ) throws IOException
 	{
 
+	  if (args.length == 0) {
+      System.out.println("copyFromStaging {srcDir} {targetDir} {targetGroup} {targetPrem}");
+      return;
+    }
+	  
 		Logger logger = Logger.getLogger(CopyFromStaging.class);
 		logger.info( "Starting CopyFromStaging." );
 		

@@ -17,13 +17,16 @@ public class PrivsCommon {
     logger.info("Update File Privs: " + fileStatus.getPath());
     if (targetOwner != null) {
       fs.setOwner(fileStatus.getPath(), targetOwner, targetGroup);
+    } else {
+      fs.setOwner(fileStatus.getPath(), fileStatus.getOwner(), targetGroup);
+      
     }
     fs.setPermission(fileStatus.getPath(), new FsPermission(Short.parseShort(targetPerm, 8)));
     if (fileStatus.isDirectory()) {
       for (FileStatus subFileStatus: fs.listStatus(fileStatus.getPath())) {
         changePervs(fs, targetOwner, targetGroup, targetPerm, subFileStatus);
       }
-    }
+    } 
   }
   
   public static void changePervs(FileSystem fs, String targetGroup, String targetPerm, FileStatus fileStatus) throws IOException {
