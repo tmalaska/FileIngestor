@@ -10,6 +10,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -51,7 +52,7 @@ static Logger logger = Logger.getLogger(IngestMain.class);
     logger.info("Version 0.02");
     logger.info("About to copy to HDFS: " + planPojo.getFileIngestionType());
     
-    validateIfFoldersExist(planPojo);
+    validateAndCreateIfFoldersExist(planPojo);
     
     if (planPojo.getFileIngestionType().equals(FileIngestionType.BIG_FILES)) {
       BigFileIngestToHDFSAction bigFileCopyFromLocalAction = new BigFileIngestToHDFSAction(planPojo);
@@ -84,10 +85,14 @@ static Logger logger = Logger.getLogger(IngestMain.class);
     }
   }
   
-  public static void validateIfFoldersExist(IngestionPlanPojo planPojo) throws IOException{
+  public static void validateAndCreateIfFoldersExist(IngestionPlanPojo planPojo) throws IOException{
     FileSystem fs = FileSystem.get(new Configuration());
     for (DstPojo dst: planPojo.getDstList()) {
 
+      String group = dst.getGroup();
+      String owner = dst.getOwner();
+      String permissions = dst.getPermissions();
+      
       Path path = new Path(dst.getPath());
       if (!dst.isCreateDir()) {
         //check is directory exist
@@ -95,11 +100,23 @@ static Logger logger = Logger.getLogger(IngestMain.class);
           throw new IOException("The folder '" + path + "' doesn't exist and the configs say don't create directories");
         }
       }else {
-        if (fs.exists(path) && !fs.isDirectory(path)) {
-          throw new IOException("The path '" + path + "' is not a folder but it exists.");
+        if (fs.exists(path)) { 
+          if (!fs.isDirectory(path)) {
+            throw new IOException("The path '" + path + "' is not a folder but it exists.");
+          }
+        } else {
+          mkdir(fs, group, owner, permissions, path);
         }
       }
-    
     }
+  }
+  
+  public static void mkdir(FileSystem fs, String group, String owner, String permissions, Path path) throws IOException {
+    if (!fs.exists(path.getParent())) {
+      mkdir(fs, group, owner, permissions, path.getParent());
+    }
+    fs.mkdirs(path);
+    fs.setOwner(path, owner, group);
+    fs.setPermission(path, new FsPermission(Short.parseShort(permissions, 8)));
   }
 }
