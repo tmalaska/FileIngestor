@@ -13,6 +13,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import com.cloudera.sa.fileingestor.action.common.AvroConts;
+
 public class GetSmallFileInAvroByKeyMain {
   public static void main(String[] args) throws Exception {
 
@@ -21,8 +23,7 @@ public class GetSmallFileInAvroByKeyMain {
       return;
     }
 
-    final String FIELD_FILENAME = "filename";
-    final String FIELD_CONTENTS = "contents";
+    
 
     Configuration config = new Configuration();
     FileSystem hdfs = FileSystem.get(config);
@@ -38,9 +39,9 @@ public class GetSmallFileInAvroByKeyMain {
 
     for (Object o : reader) {
       GenericRecord r = (GenericRecord) o;      
-      if (r.get(FIELD_FILENAME).toString().equals(keyToLookFor)) {
+      if (r.get(AvroConts.FIELD_FILENAME).toString().equals(keyToLookFor)) {
         BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(new File(args[2])));
-        output.write(((ByteBuffer) r.get(FIELD_CONTENTS)).array());
+        output.write(((ByteBuffer) r.get(AvroConts.FIELD_CONTENTS)).array());
         output.flush();
         output.close();
         foundFile = true;

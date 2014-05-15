@@ -37,10 +37,12 @@ public class DistCpCopyAction {
     fs = FileSystem.get(new Configuration());
 
     String[] args;
-    int counter = 0;
+    int counter = 1;
     
     if (fs.isDirectory(new Path(planPojo.getDstList().get(0).getPath()))) {
       FileStatus[] fileStatuses = fs.listStatus(new Path(planPojo.getDstList().get(0).getPath()));
+      
+      
       
       args = new String[fileStatuses.length + 1];
       
@@ -58,6 +60,12 @@ public class DistCpCopyAction {
     for (int i = 1; i < planPojo.getDstList().size(); i++) {
       DstPojo dst = planPojo.getDstList().get(i);
 
+      if (dst.isReplaceIfFileExist()) {
+        args[0] = "-overwrite";
+      } else {
+        args[0] = "-update";
+      }
+      
       if (fileStatuses.size() == 1) {
         args[args.length - 1] = dst.getPath();
       } else {

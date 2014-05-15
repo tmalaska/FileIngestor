@@ -19,13 +19,13 @@ public class Main {
     } else if (command.equals("getSmallFileInSeqByKey")) {
       GetSmallFileInSeqByKeyMain.main(subArgs);
     } else if (command.equals("explodSmallFileSeqToLocal")) {
-      System.out.println("Not implemented yet");
+      ExplodeSmallFileInSeqToLocal.main(subArgs);
     } else if (command.equals("listFilesInAvro")) {
       ListFilesInAvroMain.main(subArgs);
     } else if (command.equals("getSmallFileInAvroByKey")) {
       GetSmallFileInAvroByKeyMain.main(subArgs);
     } else if (command.equals("explodSmallFileAvroToLocal")) {
-      System.out.println("Not implemented yet");
+      ExplodeSmallFileInAvroToLocal.main(subArgs);
     } else if (command.equals("combineSmallFileSeqFiles")) {
       CombineSmallFileSeqFiles.main(subArgs);
     } else if (command.equals("combineSmallFileAvroFiles")) {

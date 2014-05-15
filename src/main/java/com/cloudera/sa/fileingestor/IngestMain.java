@@ -49,7 +49,7 @@ static Logger logger = Logger.getLogger(IngestMain.class);
     
     ArrayList<FileStatus> fileStatusList = new ArrayList<FileStatus>();
     
-    logger.info("Version 0.02");
+    logger.info("Version 0.03");
     logger.info("About to copy to HDFS: " + planPojo.getFileIngestionType());
     
     validateAndCreateIfFoldersExist(planPojo);
@@ -67,7 +67,9 @@ static Logger logger = Logger.getLogger(IngestMain.class);
       littleFileIntoAvroCopyFromLocalAction.run();
       fileStatusList = littleFileIntoAvroCopyFromLocalAction.getCopiedFileStatuses();
     } else {
-      throw new RuntimeException("not support operation yet. " + planPojo.getFileIngestionType());
+      Exception e = new RuntimeException("not support operation yet. " + planPojo.getFileIngestionType());
+      logger.error(e.getMessage());
+      throw e;
     }
     logger.info("Files Copied to HDFS: " + fileStatusList.size());
     
@@ -80,7 +82,9 @@ static Logger logger = Logger.getLogger(IngestMain.class);
         DistCpCopyAction distCpCopyAction = new DistCpCopyAction(fileStatusList, planPojo);
         distCpCopyAction.run();
       } else {
-        throw new RuntimeException("not support operation yet. " + planPojo.getHdfsCopyMethod());
+        Exception e = new RuntimeException("not support operation yet. " + planPojo.getHdfsCopyMethod());
+        logger.error(e.getMessage());
+        throw e;
       } 
     }
   }
@@ -97,12 +101,16 @@ static Logger logger = Logger.getLogger(IngestMain.class);
       if (!dst.isCreateDir()) {
         //check is directory exist
         if (!fs.exists(path)) {
-          throw new IOException("The folder '" + path + "' doesn't exist and the configs say don't create directories");
+          IOException e = new IOException("The folder '" + path + "' doesn't exist and the configs say don't create directories");
+          logger.error(e.getMessage());
+          throw e;
         }
       }else {
         if (fs.exists(path)) { 
           if (!fs.isDirectory(path)) {
-            throw new IOException("The path '" + path + "' is not a folder but it exists.");
+            IOException e = new IOException("The path '" + path + "' is not a folder but it exists.");
+            logger.error(e.getMessage());
+            throw e;
           }
         } else {
           mkdir(fs, group, owner, permissions, path);

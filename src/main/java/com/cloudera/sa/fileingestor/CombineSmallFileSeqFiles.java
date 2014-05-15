@@ -11,8 +11,15 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.log4j.Logger;
+
+import com.cloudera.sa.fileingestor.action.AbstractIngestToHDFSAction;
 
 public class CombineSmallFileSeqFiles {
+  
+  static Logger logger = Logger.getLogger(CombineSmallFileSeqFiles.class);
+  
+  
   public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
     
     if (args.length == 0) {
@@ -72,8 +79,6 @@ public class CombineSmallFileSeqFiles {
       long startTime = System.currentTimeMillis();
       context.write(key, value);
       context.getCounter("custom", "write.context.time").increment(System.currentTimeMillis() - startTime);
-      
-      
     }
   }
   
