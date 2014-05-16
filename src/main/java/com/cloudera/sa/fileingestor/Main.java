@@ -29,7 +29,7 @@ public class Main {
     } else if (command.equals("combineSmallFileSeqFiles")) {
       CombineSmallFileSeqFiles.main(subArgs);
     } else if (command.equals("combineSmallFileAvroFiles")) {
-      System.out.println("Not implemented yet");
+      CombineSmallFileAvroFiles.main(subArgs);
     } else if (command.equals("copyToStaging")) {
       CopyToStaging.main(subArgs);
     } else if (command.equals("copyFromStaging")) {
