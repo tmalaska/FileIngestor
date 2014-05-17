@@ -6,9 +6,11 @@ It also includes utilities to enable data copying in HDFS between functional IDs
 
 Usage:
 
-Run the JAR file as a Hadoop program with config file argument:
+* *Run the JAR file as a Hadoop program with config file argument:*
 
+----
 sudo -u hdfs hadoop jar FileIngestor.jar Ingest FileIngestorSmallFilesSeq.config
+----
 
 In this example, the program file FileIngestor.jar is run with configuration file FileIngestorSmallFilesSeq.config.
 
