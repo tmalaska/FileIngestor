@@ -30,8 +30,6 @@ public class IngestionPlanFactory {
   public static String SMALL_CONTAINER_FILE_NAME_OVERRIDE = "small.container.file.name.override";
   
   
-  
-  
   public static IngestionPlanPojo getInstance(Properties p) {
     IngestionPlanPojo result = new IngestionPlanPojo();
     
@@ -127,12 +125,26 @@ public class IngestionPlanFactory {
       throw new RuntimeException("no distinations defined");
     }
     
+    
+    
     for (Entry<String, DstPojo> entry: dstMap.entrySet()) {
-      
       logger.info("adding destriniation: " + entry.getKey() + " " + entry.getValue());
-      
       dstList.add(entry.getValue());
     }
+    
+    //put any replace existing files first
+    if (dstList.get(0).isReplaceIfFileExist() == false) {
+      for (int i = 1; i < dstList.size(); i++) {
+        DstPojo pojo = dstList.get(i);
+        if (pojo.isReplaceIfFileExist() == true) {
+          DstPojo tmp = dstList.get(0);
+          dstList.set(0, pojo);
+          dstList.set(i, tmp);
+          break;
+        }
+      }
+    }
+    
     result.setDstList(dstList);
     
     return result;
