@@ -11,7 +11,7 @@ Usage:
 * sudo -u hdfs hadoop jar FileIngestor.jar ingest FileIngestorSmallFilesSeq.config
 
 Parameters:
-*ingest <configFileLocation>
+* ingest {configFileLocation}
 
 In this example, the program file FileIngestor.jar is run with configuration file FileIngestorSmallFilesSeq.config.
 
@@ -20,7 +20,7 @@ In this example, the program file FileIngestor.jar is run with configuration fil
 * sudo -u hdfs hadoop jar FileIngestor.jar listFilesInSeq /user/hdfs/staging/avro/folder1/1398648788787.seq
 
 Parameters:
-* listFilesInSeq <pathToSequenceFile>
+* listFilesInSeq {pathToSequenceFile}
 
 In this example, Contents (filenames) of avro container file in HDFS called  1398648788787.avro are displayed.
 
@@ -29,21 +29,21 @@ In this example, Contents (filenames) of avro container file in HDFS called  139
 * sudo -u hdfs hadoop jar FileIngestor.jar getSmallFileInSeqByKey /user/hdfs/staging/seq/folder1/1398648788787.seq '/Activity.CSV' /localhomedir/Activity.CSV
 
 Parameters:
-* getSmallFileInSeqByKey <pathToSequenceFile> <nameOfFileToGet> <outputFilePath>
+* getSmallFileInSeqByKey {pathToSequenceFile} {nameOfFileToGet} {outputFilePath}
 
 ### To extract all files from HDFS Sequence container file, run:
 
 sudo -u hdfs hadoop jar FileIngestor.jar explodSmallFileSeqToLocal /user/hdfs/staging/seq/folder1/1398648788787.seq localhomedir
 
 Parameters:
-* explodSmallFileSeqToLocal <pathToSequenceFile> <outputFilePath>
+* explodSmallFileSeqToLocal {pathToSequenceFile} {outputFilePath}
 
 ### To list avro container file contents, run:
 
 * sudo -u hdfs hadoop jar FileIngestor.jar listFilesInAvro /user/hdfs/staging/seq/folder1/1398648788787.avro
 
 Parameters:
-* listFilesInAvro <pathToAvroFile>
+* listFilesInAvro {pathToAvroFile}
 
 In this example, Contents (filenames) of avro container file in HDFS called  1398648788787.avro are displayed.
 
@@ -52,7 +52,7 @@ In this example, Contents (filenames) of avro container file in HDFS called  139
 * sudo -u hdfs hadoop jar FileIngestor.jar getSmallFileInAvroByKey /user/hdfs/staging/avro/folder1/1398648788787.avro '/Activity.CSV' /localhomedir/Activity.CSV
 
 Parameters:
-* getSmallFileInSeqByKey <pathToAvroFile> <nameOfFileToGet> <outputFilePath>
+* getSmallFileInSeqByKey {pathToAvroFile} {nameOfFileToGet} {outputFilePath}
 
 In this example, file '/Activity.CSV~1389' which is in avro container file in HDFS called  1398648788787.avro, is extracted to local (not HDFS) directory called /localhomedir.
 
@@ -61,7 +61,7 @@ In this example, file '/Activity.CSV~1389' which is in avro container file in HD
 sudo -u hdfs hadoop jar FileIngestor.jar explodSmallFileAvroToLocal /user/hdfs/staging/avro/folder1/1398648788787.seq localhomedir
 
 Parameters:
-* explodSmallFileAvroToLocal <pathToSequenceFile> <outputFilePath>
+* explodSmallFileAvroToLocal {pathToSequenceFile} {outputFilePath}
 
 
 ### To copy data into staging directory in HDFS:
