@@ -8,12 +8,34 @@ Usage:
 
 ### Run the JAR file as a Hadoop program with config file argument:
 
+* sudo -u hdfs hadoop jar FileIngestor.jar {command} {command parameters}
+
+Each command will have different parameters.  To have the parameters listed just add no parameters and execute the command.  It will output help
+
+### To run the ingestion command
+
 * sudo -u hdfs hadoop jar FileIngestor.jar ingest FileIngestorSmallFilesSeq.config
 
 Parameters:
 * ingest {configFileLocation}
 
-In this example, the program file FileIngestor.jar is run with configuration file FileIngestorSmallFilesSeq.config.
+The ingestion logic can be pretty involved so it is populated in a config file.  There are a couple examples of config files in the exampleConfig directory.
+
+Here are the key config options:
+
+* local.scr.dir={this is the local scr folder}
+* local.working.dir={this is the local working folder that will hold the files why they are being copied}
+* file.ingestion.type={The Ingestion method: options are BIG_FILE, SEQ_SMALL_FILES AVRO_SMALL_FILES}
+* number.of.threads={number of local threads to copy over large files to HDFS.  Recommended 4 per drive)
+* hdfs.copy.type=DISTCP {Distcp is the only option now}
+* dst.{dist.name}.path={root hdfs dir}
+* dst.{dist.name}.owner={owner of final file}
+* dst.{dist.name}.group={group of the final file}
+* dst.{dist.name}.permission={privs of final file}
+* dst.{dist.name}.createDir={true is create directory if it doesn't exist}
+* dst.{dist.name}.replaceExistingFile={true if you want it to over write files}
+
+There can be more then one dst.  Only one will get the initial copy from local.  The rest will be populated with distcp.
 
 ### To list Wequence container file contents, run:
 
@@ -78,7 +100,7 @@ In this example, the id name dataproducer will copy contents in source directory
 * sudo -u dataconsumer hadoop jar HdfsCopy.jar copyFromStaging /hdfscopy/destination /user/dataconsumer/destination marketing 750
 
 Parameters:
-copyToStaging {srcDir} {targetDir} {targetGroup}
+* copyToStaging {srcDir} {targetDir} {targetGroup}
 
 In this example, the FID name dataconsumer will copy contents from source staging directory into the target directory. Then it will change the group owner of the destination contents (files and directories) to marketing with read  (750 in octal notation) permissions.
 
