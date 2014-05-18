@@ -6,35 +6,79 @@ It also includes utilities to enable data copying in HDFS between functional IDs
 
 Usage:
 
-* *Run the JAR file as a Hadoop program with config file argument:*
+### Run the JAR file as a Hadoop program with config file argument:
 
-----
-sudo -u hdfs hadoop jar FileIngestor.jar Ingest FileIngestorSmallFilesSeq.config
-----
+* sudo -u hdfs hadoop jar FileIngestor.jar ingest FileIngestorSmallFilesSeq.config
+
+Parameters:
+*ingest <configFileLocation>
 
 In this example, the program file FileIngestor.jar is run with configuration file FileIngestorSmallFilesSeq.config.
 
-To list container file contents, run:
+### To list Wequence container file contents, run:
 
-sudo -u hdfs hadoop jar FileIngestor.jar listFilesInAvro /user/hdfs/staging/avro/folder1/1398648788787.avro
+* sudo -u hdfs hadoop jar FileIngestor.jar listFilesInSeq /user/hdfs/staging/avro/folder1/1398648788787.seq
+
+Parameters:
+* listFilesInSeq <pathToSequenceFile>
 
 In this example, Contents (filenames) of avro container file in HDFS called  1398648788787.avro are displayed.
 
-To extract a file from HDFS container file, run:
+### To extract a file from HDFS Sequence container file, run:
 
-sudo -u hdfs hadoop jar FileIngestor.jar getSmallFileInAvroByKey /user/hdfs/staging/avro/folder1/1398648788787.avro '/Activity.CSV' /localhomedir/Activity.CSV
+* sudo -u hdfs hadoop jar FileIngestor.jar getSmallFileInSeqByKey /user/hdfs/staging/seq/folder1/1398648788787.seq '/Activity.CSV' /localhomedir/Activity.CSV
+
+Parameters:
+* getSmallFileInSeqByKey <pathToSequenceFile> <nameOfFileToGet> <outputFilePath>
+
+### To extract all files from HDFS Sequence container file, run:
+
+sudo -u hdfs hadoop jar FileIngestor.jar explodSmallFileSeqToLocal /user/hdfs/staging/seq/folder1/1398648788787.seq localhomedir
+
+Parameters:
+* explodSmallFileSeqToLocal <pathToSequenceFile> <outputFilePath>
+
+### To list avro container file contents, run:
+
+* sudo -u hdfs hadoop jar FileIngestor.jar listFilesInAvro /user/hdfs/staging/seq/folder1/1398648788787.avro
+
+Parameters:
+* listFilesInAvro <pathToAvroFile>
+
+In this example, Contents (filenames) of avro container file in HDFS called  1398648788787.avro are displayed.
+
+### To extract a file from HDFS avro container file, run:
+
+* sudo -u hdfs hadoop jar FileIngestor.jar getSmallFileInAvroByKey /user/hdfs/staging/avro/folder1/1398648788787.avro '/Activity.CSV' /localhomedir/Activity.CSV
+
+Parameters:
+* getSmallFileInSeqByKey <pathToAvroFile> <nameOfFileToGet> <outputFilePath>
 
 In this example, file '/Activity.CSV~1389' which is in avro container file in HDFS called  1398648788787.avro, is extracted to local (not HDFS) directory called /localhomedir.
 
-To copy data into staging directory in HDFS:
+### To extract all files from HDFS Avro container file, run:
 
-sudo -u dataproducer hadoop jar HdfsCopy.jar CopyToStaging /hdfscopy/source /hdfscopy/destination datastaging
+sudo -u hdfs hadoop jar FileIngestor.jar explodSmallFileAvroToLocal /user/hdfs/staging/avro/folder1/1398648788787.seq localhomedir
+
+Parameters:
+* explodSmallFileAvroToLocal <pathToSequenceFile> <outputFilePath>
+
+
+### To copy data into staging directory in HDFS:
+
+* sudo -u dataproducer hadoop jar HdfsCopy.jar copyToStaging /hdfscopy/source /hdfscopy/destination datastaging
+
+Parameters:
+* copyFromStaging {srcDir} {targetDir} {targetGroup} {targetPrem}
 
 In this example, the id name dataproducer will copy contents in source directory into the destination. Then it will change the group owner of the destination contents (files and directories) to datastaging with appropridate permissions.
 
-To copy data from a staging directory in HDFS:
+### To copy data from a staging directory in HDFS:
 
-sudo -u dataconsumer hadoop jar HdfsCopy.jar CopyFromStaging /hdfscopy/destination /user/dataconsumer/destination marketing 750
+* sudo -u dataconsumer hadoop jar HdfsCopy.jar copyFromStaging /hdfscopy/destination /user/dataconsumer/destination marketing 750
+
+Parameters:
+copyToStaging {srcDir} {targetDir} {targetGroup}
 
 In this example, the FID name dataconsumer will copy contents from source staging directory into the target directory. Then it will change the group owner of the destination contents (files and directories) to marketing with read  (750 in octal notation) permissions.
 
