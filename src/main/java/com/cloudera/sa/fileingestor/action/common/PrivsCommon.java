@@ -15,9 +15,9 @@ public class PrivsCommon {
   
   public static void changePervs(FileSystem fs, String targetOwner, String targetGroup, String targetPerm, FileStatus fileStatus) throws IOException {
     logger.info("Update File Privs: " + fileStatus.getPath());
-    if (targetOwner != null && targetGroup != null) {
+    //if (targetOwner != null && targetGroup != null) {
       fs.setOwner(fileStatus.getPath(), targetOwner, targetGroup);
-    }
+    //}
     fs.setPermission(fileStatus.getPath(), new FsPermission(Short.parseShort(targetPerm, 8)));
     if (fileStatus.isDirectory()) {
       for (FileStatus subFileStatus: fs.listStatus(fileStatus.getPath())) {

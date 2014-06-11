@@ -2,6 +2,9 @@ package com.cloudera.sa.fileingestor;
 
 import java.io.IOException;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
@@ -62,6 +65,21 @@ public class CombineSmallFileSeqFiles {
 
     // Exit
     job.waitForCompletion(true);
+    
+    //ÑREMOVE LOG FILES IN HDFS
+    FileSystem fs = FileSystem.get(new Configuration());
+    Path dstPath = new Path(outputPath);
+    try {
+
+      for (FileStatus fileStatus : fs.listStatus(dstPath)) {
+        if (fileStatus.getPath().getName().startsWith("_SUCCESS") || fileStatus.getPath().getName().startsWith("_logs")) {
+          logger.info("Removing Log: " + fileStatus.getPath().getName());
+          fs.delete(fileStatus.getPath(), true);
+        }
+      }
+    } catch (Exception e) {
+      logger.error("Problem removing logs.", e);
+    }
 
   }
   
