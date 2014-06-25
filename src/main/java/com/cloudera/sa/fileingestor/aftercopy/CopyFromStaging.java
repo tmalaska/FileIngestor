@@ -59,6 +59,19 @@ public class CopyFromStaging {
 		} catch (Exception e) {
 			logger.error(e);
 		}
+		//ÑREMOVE LOG FILES IN HDFS
+	    Path dstPath = new Path(targetDir);
+	    try {
+	      for (FileStatus fileStatus : fs.listStatus(dstPath)) {
+	        if (fileStatus.getPath().getName().startsWith("_SUCCESS") || fileStatus.getPath().getName().startsWith("_distcp_logs")) {
+	          logger.info("Removing Log: " + fileStatus.getPath().getName());
+	          fs.delete(fileStatus.getPath(), true);
+	        }
+	      }
+	    } catch (Exception e) {
+	      logger.error("Problem removing logs.", e);
+	    }
+		//
 		logger.info("Finished DistCp");
 	}
 	
